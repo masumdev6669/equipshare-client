@@ -55,6 +55,24 @@ export default function RegisterPage() {
         return;
       }
 
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+      const res = await fetch(`${baseUrl}/api/auth/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          name: form.name,
+          role: "Customer",
+        }),
+      });
+
+      const tokenData = await res.json();
+      if (tokenData.token) {
+        localStorage.setItem("token", tokenData.token);
+      }
+
       toast.success("Account created successfully!");
       router.push("/");
     } catch (err) {
