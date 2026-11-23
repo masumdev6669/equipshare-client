@@ -54,22 +54,29 @@ export default function AddEquipmentPage() {
     formData.append("image", file);
 
     try {
-      const res = await fetch(
-        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+
+      if (!apiKey) {
+        toast.error("API Key missing in .env.local");
+        setImageUploading(false);
+        return;
+      }
+
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
       const data = await res.json();
+
       if (data.success) {
         setForm({ ...form, image: data.data.url });
         toast.success("Image uploaded successfully!");
       } else {
-        toast.error("Image upload failed");
+        toast.error(data.error?.message || "Image upload failed");
       }
-    } catch (error) {
-      toast.error("Image upload error");
+    } catch (error: any) {
+      toast.error(error.message || "Image upload error");
     } finally {
       setImageUploading(false);
     }
@@ -91,12 +98,7 @@ export default function AddEquipmentPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          ...form,
-          ownerEmail: session?.user?.email,
-          ownerName: session?.user?.name,
-          status: "Pending",
-        }),
+        body: JSON.stringify(form),
       });
 
       const data = await res.json();
