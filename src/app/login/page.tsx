@@ -37,6 +37,21 @@ export default function LoginPage() {
         return;
       }
 
+      const name = data?.user?.name || "User";
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+      const res = await fetch(`${baseUrl}/api/auth/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email, name }),
+      });
+
+      const tokenData = await res.json();
+      if (tokenData.token) {
+        localStorage.setItem("token", tokenData.token);
+      }
+
       toast.success("Welcome back!");
       router.push("/");
     } catch (err) {
