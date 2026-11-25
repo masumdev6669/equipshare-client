@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,26 +9,46 @@ import { User } from "lucide-react";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
-  const [form, setForm] = useState({
-    name: session?.user?.name || "",
-    phone: "",
-    address: "",
-  });
+  const [form, setForm] = useState({ name: "", phone: "", address: "" });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      setForm({
+        name: session.user.name || "",
+        phone: (session.user as any).phone || "",
+        address: (session.user as any).address || "",
+      });
+    }
+  }, [session]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${baseUrl}/api/auth/update-profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) throw new Error("Failed to update profile");
       toast.success("Profile updated successfully!");
-    }, 800);
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold text-primary">My Profile</h1>
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
