@@ -4,20 +4,21 @@ import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import {
   LayoutDashboard,
-  List,
-  Heart,
+  Users,
+  Package,
+  ShoppingCart,
   User,
   PlusCircle,
+  Heart,
+  List,
   Settings,
-  Users,
-  ShieldCheck,
 } from "lucide-react";
 
 export default function DashboardSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
 
-  const role = session?.user?.role || "Customer";
+  const role = (session?.user as any)?.role || "Customer";
 
   const customerLinks = [
     {
@@ -38,6 +39,11 @@ export default function DashboardSidebar() {
   ];
 
   const ownerLinks = [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: <LayoutDashboard className="h-4 w-4" />,
+    },
     {
       name: "Add Equipment",
       href: "/dashboard/add-equipment",
@@ -62,6 +68,11 @@ export default function DashboardSidebar() {
 
   const adminLinks = [
     {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: <LayoutDashboard className="h-4 w-4" />,
+    },
+    {
       name: "All Users",
       href: "/dashboard/all-users",
       icon: <Users className="h-4 w-4" />,
@@ -69,12 +80,12 @@ export default function DashboardSidebar() {
     {
       name: "All Equipment",
       href: "/dashboard/all-equipment",
-      icon: <ShieldCheck className="h-4 w-4" />,
+      icon: <Package className="h-4 w-4" />,
     },
     {
       name: "All Rentals",
       href: "/dashboard/all-rentals",
-      icon: <List className="h-4 w-4" />,
+      icon: <ShoppingCart className="h-4 w-4" />,
     },
     {
       name: "Profile",
