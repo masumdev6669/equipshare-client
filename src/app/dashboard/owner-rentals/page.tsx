@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/Toast";
 
@@ -8,24 +9,44 @@ export default function OwnerRentalsPage() {
   const [rentals, setRentals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const loadRentals = async () => {
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${baseUrl}/api/bookings/owner`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) setRentals(data);
+    } catch (error) {
+      toast.error("Failed to load rentals");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadRentals = async () => {
-      try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/bookings/owner`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const data = await res.json();
-        if (Array.isArray(data)) setRentals(data);
-      } catch (error) {
-        toast.error("Failed to load rentals");
-      } finally {
-        setLoading(false);
-      }
-    };
     loadRentals();
   }, []);
+
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      await fetch(`${baseUrl}/api/bookings/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      toast.success(`Booking ${status}`);
+      loadRentals();
+    } catch (error) {
+      toast.error("Failed to update status");
+    }
+  };
 
   if (loading)
     return <div className="p-20 text-center">Loading rentals...</div>;
@@ -48,11 +69,12 @@ export default function OwnerRentalsPage() {
                   <tr>
                     <th className="px-6 py-3">Customer</th>
                     <th className="px-6 py-3">Equipment</th>
-                    <th className="px-6 py-3">Rental Duration</th>
-                    <th className="px-6 py-3">Quantity</th>
+                    <th className="px-6 py-3">Duration</th>
+                    <th className="px-6 py-3">Qty</th>
                     <th className="px-6 py-3">Amount</th>
                     <th className="px-6 py-3">Payment</th>
                     <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -94,6 +116,28 @@ export default function OwnerRentalsPage() {
                         >
                           {item.bookingStatus}
                         </Badge>
+                      </td>
+                      <td className="px-6 py-4 flex justify-end gap-2">
+                        {item.bookingStatus === "Pending" && (
+                          <>
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                              onClick={() => updateStatus(item._id, "Approved")}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() =>
+                                updateStatus(item._id, "Cancelled")
+                              }
+                            >
+                              Reject
+                            </Button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))}

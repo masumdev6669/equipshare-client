@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -19,76 +20,60 @@ import {
   Star,
 } from "lucide-react";
 
-const featuredEquipment = [
-  {
-    _id: "1",
-    name: "Canon EOS R5 Camera",
-    category: "Photography Equipment",
-    rentalPrice: 5000,
-    rentalType: "Daily",
-    location: "Dhaka",
-    image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&q=80",
-  },
-  {
-    _id: "2",
-    name: "JCB Excavator",
-    category: "Construction Equipment",
-    rentalPrice: 25000,
-    rentalType: "Daily",
-    location: "Chittagong",
-    image:
-      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80",
-  },
-  {
-    _id: "3",
-    name: "Toyota Hiace Microbus",
-    category: "Vehicles & Transportation",
-    rentalPrice: 8000,
-    rentalType: "Daily",
-    location: "Dhaka",
-    image:
-      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&q=80",
-  },
-];
-
-const categories = [
-  { name: "Construction", icon: "🚜" },
-  { name: "Photography", icon: "📸" },
-  { name: "Vehicles", icon: "🚗" },
-  { name: "Agriculture", icon: "🌾" },
-  { name: "Electronics", icon: "💻" },
-  { name: "Event Equipment", icon: "🎪" },
-];
-
-const reviews = [
-  {
-    name: "Rahim Ahmed",
-    rating: 5,
-    comment:
-      "Great service! The equipment was in perfect condition and the owner was very helpful.",
-  },
-  {
-    name: "Karim Hossain",
-    rating: 4,
-    comment:
-      "Smooth booking process. The delivery was on time. Highly recommend EquipShare.",
-  },
-  {
-    name: "Fatima Begum",
-    rating: 5,
-    comment:
-      "I rented a camera for my wedding. The quality was amazing and the price was reasonable.",
-  },
-  {
-    name: "Sajid Khan",
-    rating: 5,
-    comment:
-      "Very secure payment system. I felt safe renting equipment through this platform.",
-  },
-];
-
 export default function HomePage() {
+  const [featured, setFeatured] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchRecent = async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const res = await fetch(`${baseUrl}/api/equipment/recent`);
+        const data = await res.json();
+        if (Array.isArray(data)) setFeatured(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchRecent();
+  }, []);
+
+  const categories = [
+    { name: "Construction", icon: "🚜" },
+    { name: "Photography", icon: "📸" },
+    { name: "Vehicles", icon: "🚗" },
+    { name: "Agriculture", icon: "🌾" },
+    { name: "Electronics", icon: "💻" },
+    { name: "Event Equipment", icon: "🎪" },
+  ];
+
+  const reviews = [
+    {
+      name: "Rahim Ahmed",
+      rating: 5,
+      comment:
+        "Great service! The equipment was in perfect condition and the owner was very helpful.",
+    },
+    {
+      name: "Karim Hossain",
+      rating: 4,
+      comment:
+        "Smooth booking process. The delivery was on time. Highly recommend EquipShare.",
+    },
+    {
+      name: "Fatima Begum",
+      rating: 5,
+      comment:
+        "I rented a camera for my wedding. The quality was amazing and the price was reasonable.",
+    },
+    {
+      name: "Sajid Khan",
+      rating: 5,
+      comment:
+        "Very secure payment system. I felt safe renting equipment through this platform.",
+    },
+  ];
+
   return (
     <div className="flex flex-col w-full">
       <section className="w-full min-h-[70vh] flex items-center justify-center bg-gradient-to-r from-primary/10 to-secondary/10 relative overflow-hidden">
@@ -158,7 +143,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredEquipment.map((item, i) => (
+            {featured.map((item, i) => (
               <motion.div
                 key={item._id}
                 initial={{ opacity: 0, y: 30 }}
@@ -166,12 +151,12 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <Card className="overflow-hidden card-hover flex flex-col h-full">
-                  <div className="relative h-48 w-full">
+                <Card className="overflow-hidden card-hover flex flex-col h-full group">
+                  <div className="relative h-48 w-full overflow-hidden">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="object-cover w-full h-full"
+                      className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
                   <CardHeader className="p-5 pb-2">
