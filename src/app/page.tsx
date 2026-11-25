@@ -273,6 +273,47 @@ export default function HomePage() {
       <section className="w-full py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tight">How It Works</h2>
+            <p className="text-muted-foreground mt-3">
+              Renting equipment is just 3 simple steps away.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "01",
+                t: "Find Equipment",
+                d: "Browse our wide range of equipment and find what you need.",
+              },
+              {
+                step: "02",
+                t: "Book & Pay",
+                d: "Select your dates, make a secure payment via Stripe.",
+              },
+              {
+                step: "03",
+                t: "Enjoy & Return",
+                d: "Use the equipment and return it after your rental period ends.",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="relative bg-card border p-8 rounded-2xl text-center space-y-3"
+              >
+                <div className="text-5xl font-extrabold text-secondary/20 absolute top-4 right-4">
+                  {item.step}
+                </div>
+                <h3 className="text-xl font-bold mt-2">{item.t}</h3>
+                <p className="text-muted-foreground text-sm">{item.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full py-16 md:py-24">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight">
               What Our Customers Say
             </h2>

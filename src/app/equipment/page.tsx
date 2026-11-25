@@ -14,55 +14,66 @@ import { Input } from "@/components/ui/input";
 import { MapPin, Search } from "lucide-react";
 import { toast } from "@/components/Toast";
 
+const CATEGORIES = [
+  "Construction",
+  "Photography",
+  "Vehicles",
+  "Agriculture",
+  "Electronics",
+  "Event Equipment",
+];
+const RENTAL_TYPES = ["Daily", "Weekly", "Monthly"];
+
 export default function AllEquipmentPage() {
   const [equipment, setEquipment] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("");
+  const [rentalType, setRentalType] = useState("");
+  const [sort, setSort] = useState("");
+
+  const fetchEquipment = async () => {
+    setLoading(true);
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const params = new URLSearchParams();
+      if (searchTerm) params.append("search", searchTerm);
+      if (category) params.append("category", category);
+      if (rentalType) params.append("rentalType", rentalType);
+      if (sort) params.append("sort", sort);
+
+      const res = await fetch(`${baseUrl}/api/equipment?${params.toString()}`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setEquipment(data);
+      } else {
+        setEquipment([]);
+      }
+    } catch (error) {
+      toast.error("Failed to load equipment");
+      setEquipment([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEquipment = async () => {
-      try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/equipment`);
-        const data = await res.json();
-        setEquipment(data);
-      } catch (error) {
-        toast.error("Failed to load equipment");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchEquipment();
-  }, []);
+  }, [category, rentalType, sort]);
 
-  const filteredEquipment = equipment.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = category ? item.category === category : true;
-    return matchesSearch && matchesCategory;
-  });
-
-  const categories = [
-    "Construction",
-    "Photography",
-    "Vehicles",
-    "Agriculture",
-    "Electronics",
-    "Event Equipment",
-  ];
-
-  if (loading)
-    return <div className="p-20 text-center">Loading equipment...</div>;
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchEquipment();
+  };
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-primary">All Equipment</h1>
-        <div className="flex gap-4 w-full md:w-auto">
-          <div className="relative w-full md:w-64">
+      <h1 className="text-3xl font-bold text-primary mb-8">All Equipment</h1>
+
+      <div className="flex flex-col lg:flex-row gap-4 mb-8">
+        <form onSubmit={handleSearch} className="flex-1 flex gap-2">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by name or location..."
@@ -71,33 +82,61 @@ export default function AllEquipmentPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <select
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">All Categories</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
+          <Button type="submit" className="bg-primary">
+            Search
+          </Button>
+        </form>
+
+        <select
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">All Categories</option>
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={rentalType}
+          onChange={(e) => setRentalType(e.target.value)}
+        >
+          <option value="">All Rental Types</option>
+          {RENTAL_TYPES.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        >
+          <option value="">Sort By</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+        </select>
       </div>
 
-      {filteredEquipment.length === 0 ? (
-        <div className="text-center py-20">
+      {loading ? (
+        <div className="text-center py-20 text-lg text-muted-foreground">
+          Loading equipment...
+        </div>
+      ) : equipment.length === 0 ? (
+        <div className="text-center py-20 border-2 border-dashed rounded-2xl">
           <p className="text-lg font-semibold text-muted-foreground">
             No equipment found
-          </p>
-          <p className="text-sm text-muted-foreground/70">
-            Try adjusting your search or filters.
           </p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEquipment.map((item) => (
+          {equipment.map((item) => (
             <Card
               key={item._id}
               className="overflow-hidden card-hover flex flex-col group"
