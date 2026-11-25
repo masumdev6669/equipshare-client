@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { MapPin, Search } from "lucide-react";
 import { toast } from "@/components/Toast";
+import SkeletonCard from "@/components/SkeletonCard";
 
 const CATEGORIES = [
   "Construction",
@@ -125,8 +126,10 @@ export default function AllEquipmentPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-lg text-muted-foreground">
-          Loading equipment...
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : equipment.length === 0 ? (
         <div className="text-center py-20 border-2 border-dashed rounded-2xl">
