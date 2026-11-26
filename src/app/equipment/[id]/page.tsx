@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/Toast";
 import { MapPin, Calendar, ShieldCheck, Heart, X } from "lucide-react";
 
-function EquipmentDetailsContent() {
+export default function EquipmentDetailsPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const [equipment, setEquipment] = useState<any>(null);
@@ -329,13 +329,5 @@ function EquipmentDetailsContent() {
         </div>
       )}
     </div>
-  );
-}
-
-export default function EquipmentDetailsPage() {
-  return (
-    <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
-      <EquipmentDetailsContent />
-    </Suspense>
   );
 }
