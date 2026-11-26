@@ -34,7 +34,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center">
           <Image
             src={logo}
-            alt="EquipShare"
+            alt="EquipShare Logo"
             width={160}
             height={60}
             className="object-contain"
@@ -64,7 +64,7 @@ export default function Navbar() {
             <div className="h-10 w-10 animate-pulse bg-muted rounded-full"></div>
           ) : session?.user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger>
                 <div className="cursor-pointer outline-none">
                   <Avatar className="h-10 w-10 border-2 border-primary">
                     <AvatarImage
