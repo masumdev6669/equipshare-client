@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EquipShare - Equipment Rental Platform
+
+EquipShare is a full-stack community-driven equipment rental platform where owners can list their equipment for rent and customers can browse, book, and rent equipment. The platform includes secure online payments, role-based dashboards, and administrative management.
+
+**Live Site URL:** [https://equipshare-client-geu9.vercel.app](https://equipshare-client-geu9.vercel.app)
+
+## Key Features
+
+- 🔐 **Secure Authentication:** Email/Password and Google login powered by BetterAuth and MongoDB, with JWT-protected Express APIs.
+- 👥 **Role-Based Access Control (RBAC):** Distinct dashboards and permissions for Customers, Equipment Owners, and Admins.
+- 📅 **Equipment Management:** Owners can list equipment with images (imgbb), manage their inventory, and approve rental requests.
+- 🔍 **Advanced Search & Filtering:** Server-side search, category filtering, rental type filtering, and sorting on the All Equipment page.
+- 💳 **Secure Payments:** Integrated Stripe Payment Gateway for seamless rental bookings and transactions.
+- 📊 **Dashboard Analytics:** Visual charts and statistics for Admin and Owner dashboards.
+- 🌗 **Dark/Light Mode:** A seamless theme toggling experience across the application.
+- 📱 **Fully Responsive:** Mobile-first design ensuring the platform works perfectly on all devices.
+
+## Tech Stack
+
+- **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS, ShadCN UI, Framer Motion
+- **Backend:** Express JS, TypeScript, MongoDB (MongoDB Driver), JWT
+- **Authentication:** BetterAuth (MongoDB Adapter)
+- **Payment Gateway:** Stripe
+- **Image Hosting:** imgBB API
+
+## NPM Packages Used
+
+### Client Side
+
+- `next`, `react`, `react-dom`
+- `better-auth`, `mongodb`
+- `framer-motion` (for animations)
+- `lucide-react` (for icons)
+- `recharts` (for dashboard analytics)
+- `tailwindcss`, `shadcn/ui` components
+
+### Server Side
+
+- `express`, `cors`, `dotenv`
+- `mongodb` (native driver)
+- `jsonwebtoken` (for JWT authentication)
+- `stripe` (for payment processing)
+- `tsx`, `typescript` (for development)
+
+## Admin Credentials
+
+- **Email:** test1@example.com
+- **Password:** (your password)
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up `.env.local` with required environment variables
+4. Run the development server: `npm run dev`
