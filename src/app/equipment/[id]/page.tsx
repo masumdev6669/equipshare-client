@@ -1,6 +1,6 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +9,13 @@ import { toast } from "@/components/Toast";
 import { MapPin, Calendar, ShieldCheck, Heart, X } from "lucide-react";
 
 function EquipmentDetailsContent() {
-  const { id } = useParams();
   const router = useRouter();
   const { data: session } = useSession();
   const [equipment, setEquipment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [equipmentId, setEquipmentId] = useState<string>("");
 
   const [bookingForm, setBookingForm] = useState({
     rentalStartDate: "",
@@ -27,11 +27,18 @@ function EquipmentDetailsContent() {
   });
 
   useEffect(() => {
+    const pathParts = window.location.pathname.split("/");
+    const id = pathParts[pathParts.length - 1];
+    setEquipmentId(id);
+  }, []);
+
+  useEffect(() => {
+    if (!equipmentId) return;
     const fetchEquipment = async () => {
       try {
         const baseUrl =
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/equipment/${id}`);
+        const res = await fetch(`${baseUrl}/api/equipment/${equipmentId}`);
         const data = await res.json();
         setEquipment(data);
       } catch (error) {
@@ -41,7 +48,7 @@ function EquipmentDetailsContent() {
       }
     };
     fetchEquipment();
-  }, [id]);
+  }, [equipmentId]);
 
   const calculateTotal = () => {
     if (
